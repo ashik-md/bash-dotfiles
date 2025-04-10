@@ -1,16 +1,128 @@
-# Source global definitions
-if [ -f /etc/bashrc ]; then
-    . /etc/bashrc
+# ~/.bashrc: executed by bash(1) for non-login shells.
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+# Append to the history file, don't overwrite it
+shopt -s histappend
+
+# Save each command immediately after execution
+PROMPT_COMMAND='history -a'
+
+# Add custom bin directory to PATH if it exists
+if [ -d "$HOME/bin" ]; then
+    export PATH="$HOME/bin:$PATH"
 fi
 
-# User-specific environment and startup programs
-export PATH=$PATH:$HOME/bin
-
-# Source additional bash configurations from ~/.bashrc.d/
-if [ -d ~/.bashrc.d ]; then
-    for file in ~/.bashrc.d/*.sh; do
-        if [ -r "$file" ]; then
-            . "$file"
-        fi
-    done
+# Enable programmable completion features (if available)
+if ! shopt -oq posix; then
+    if [ -f /usr/share/bash-completion/bash_completion ]; then
+        . /usr/share/bash-completion/bash_completion
+    elif [ -f /etc/bash_completion ]; then
+        . /etc/bash_completion
+    fi
 fi
+
+# ====================
+# General Aliases
+# ====================
+
+# Navigation shortcuts
+alias ..='cd ..'          # Go up one directory
+alias ...='cd ../..'      # Go up two directories
+alias d='cd ~/Downloads'  # Shortcut to Downloads folder
+alias dt='cd ~/Desktop'   # Shortcut to Desktop folder
+alias c='clear'           # Clear the terminal screen
+
+# List files in a more readable format
+alias ls='ls --color=auto'
+alias ll='ls -lh'         # List files in long format with human-readable sizes
+alias la='ls -A'          # List all files, including hidden ones
+
+# Common commands
+alias h='history'         # Show command history
+alias grep='grep --color=auto'  # Colorize grep output
+alias mkdir='mkdir -p'    # Create parent directories as needed
+alias rm='rm -i'          # Prompt before removing files
+alias cp='cp -i'          # Prompt before overwriting files
+alias mv='mv -i'          # Prompt before overwriting files
+
+# System monitoring
+alias top='htop'          # Use htop instead of top (install htop if not available)
+alias df='df -h'          # Show disk usage in human-readable format
+alias du='du -h --max-depth=1'  # Show directory sizes in human-readable format
+
+# ====================
+# Custom Aliases
+# ====================
+
+# Your custom script aliases
+alias ar='~/bin/aria2c_script.sh'  # Alias for aria2c script
+alias yt='~/bin/yt-dlp_script.sh'  # Alias for yt-dlp script
+
+# Example: Add more custom aliases here
+# alias example='command_to_run'
+
+# ====================
+# Ultimate Extract Function
+# ====================
+
+extract() {
+    if [ -z "$1" ]; then
+        echo "Usage: extract <file>"
+        return 1
+    fi
+
+    local file="$1"
+    local filename=$(basename "$file")
+    local target_dir="${filename%.*}"
+
+    # Ensure the target directory exists
+    mkdir -p "$target_dir"
+
+    echo "Extracting '$file' into './$target_dir/'..."
+
+    case "$file" in
+        *.tar.bz2|*.tbz2) tar xjf "$file" -C "$target_dir" ;;
+        *.tar.gz|*.tgz)   tar xzf "$file" -C "$target_dir" ;;
+        *.tar.xz|*.txz)   tar xJf "$file" -C "$target_dir" ;;
+        *.tar.lz|*.tlz)   tar --lzip -xf "$file" -C "$target_dir" ;;
+        *.tar.zst|*.tzst) tar --zstd -xf "$file" -C "$target_dir" ;;
+        *.tar)            tar xf "$file" -C "$target_dir" ;;
+        *.gz)             gunzip -c "$file" > "$target_dir/${filename%.gz}" ;;
+        *.bz2)            bunzip2 -c "$file" > "$target_dir/${filename%.bz2}" ;;
+        *.xz)             unxz -c "$file" > "$target_dir/${filename%.xz}" ;;
+        *.lzma)           unlzma -c "$file" > "$target_dir/${filename%.lzma}" ;;
+        *.zip)            unzip "$file" -d "$target_dir" ;;
+        *.rar)            unrar x "$file" "$target_dir/" ;;
+        *.7z)             7z x "$file" -o"$target_dir" ;;
+        *.Z)              uncompress "$file" ;;
+        *.deb)            ar x "$file" -C "$target_dir" ;;
+        *.rpm)            rpm2cpio "$file" | cpio -idmv -D "$target_dir" ;;
+        *)                echo "Unsupported file type: $file" && return 1 ;;
+    esac
+
+    echo "Extraction complete."
+}
+
+# ====================
+# Minimalist Stylized Prompt with Git Support
+# ====================
+
+# Function to display Git branch/status in the prompt
+parse_git_branch() {
+    git rev-parse --is-inside-work-tree &>/dev/null || return
+    local branch=$(git branch 2>/dev/null | sed -n '/^\*/s/^\* \(.*\)/\1/p')
+    local status=$(git status --porcelain 2>/dev/null)
+
+    # Check for uncommitted changes
+    if [[ -n $status ]]; then
+        echo "[$branch ✱]"  # Add a star (*) if there are uncommitted changes
+    else
+        echo "[$branch]"
+    fi
+}
+
+# Set a minimalist stylized prompt with Git support
+export PS1="\u@\h:\w\[\e[38;5;61m\]\$(parse_git_branch)\[\e[0m\] \[\e[38;5;75m\]λ\[\e[0m\] "
+# ====================
