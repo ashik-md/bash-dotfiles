@@ -61,4 +61,13 @@ else
     echo "Error: 'icons/' directory does not exist."
 fi
 
+# 5. Check if 'foot' terminal is installed and copy foot.ini
+if command -v foot &> /dev/null; then
+    echo "Foot terminal is installed. Copying 'foot.ini' to ~/.config/foot/ ..."
+    mkdir -p "$HOME/.config/foot"  # Ensure the destination directory exists
+    safe_copy "foot.ini" "$HOME/.config/foot/foot.ini"
+else
+    echo "Foot terminal is not installed. Skipping 'foot.ini' copy."
+fi
+
 echo "Copy process completed."
