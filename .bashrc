@@ -124,4 +124,4 @@ parse_git_branch() {
 }
 
 # Set a minimalist stylized prompt with Git support
-export PS1="\u@\h:\w\[\e[38;5;61m\]\$(parse_git_branch)\[\e[0m\] \[\e[38;5;75m\]λ\[\e[0m\] "
+export PS1="\u@\h:\w\[\e[38;5;208m\]\$(parse_git_branch)\[\e[0m\] \[\e[38;5;75m\]λ\[\e[0m\] "
