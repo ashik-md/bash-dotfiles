@@ -5,7 +5,7 @@ safe_copy() {
     local src="$1"
     local dest="$2"
 
-    # Check if the destination exists
+    # Check if the destination exists (file or symbolic link)
     if [[ -e "$dest" || -L "$dest" ]]; then
         # Prompt for confirmation to overwrite
         read -p "File/directory '$dest' already exists. Overwrite? (y/n): " confirm
@@ -68,6 +68,27 @@ if command -v foot &> /dev/null; then
     safe_copy "foot.ini" "$HOME/.config/foot/foot.ini"
 else
     echo "Foot terminal is not installed. Skipping 'foot.ini' copy."
+fi
+
+# 6. Check if ~/Downloads/Images exists and copy the wallpapers directory
+# Explanation:
+# - This step checks if the directory ~/Downloads/Images exists.
+# - If it exists, the script ensures that the wallpapers directory is copied there.
+# - If the wallpapers directory does not exist in the source, an error message is displayed.
+if [[ -d "$HOME/Downloads/Images" ]]; then
+    echo "~/Downloads/Images directory exists. Checking for wallpapers..."
+    
+    # Check if the 'wallpapers' directory exists in the current dotfiles directory
+    if [[ -d "wallpapers" ]]; then
+        echo "Copying 'wallpapers' directory to ~/Downloads/Images/ ..."
+        
+        # Use safe_copy to copy the wallpapers directory
+        safe_copy "wallpapers" "$HOME/Downloads/Images/wallpapers"
+    else
+        echo "Error: 'wallpapers' directory does not exist in the current dotfiles directory."
+    fi
+else
+    echo "Error: ~/Downloads/Images directory does not exist. Skipping wallpapers copy."
 fi
 
 echo "Copy process completed."
