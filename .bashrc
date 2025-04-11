@@ -31,25 +31,25 @@ fi
 alias ..='cd ..'          # Go up one directory
 alias ...='cd ../..'      # Go up two directories
 alias d='cd ~/Downloads'  # Shortcut to Downloads folder
-alias dt='cd ~/Desktop'   # Shortcut to Desktop folder
+alias dc='cd ~/Documents' # Shortcut to ~/Documents folder
 alias c='clear'           # Clear the terminal screen
 
-# List files in a more readable format
-alias ls='ls --color=auto'
-alias ll='ls -lh'         # List files in long format with human-readable sizes
-alias la='ls -A'          # List all files, including hidden ones
+# List files with automatic color support (if terminal supports it)
+alias ls='ls --color=auto'  # Enable colors if supported by the terminal
+alias ll='ls -lh'          # Long listing with human-readable sizes
+alias la='ls -A'           # Show all files, including hidden ones
 
 # Common commands
-alias h='history'         # Show command history
-alias grep='grep --color=auto'  # Colorize grep output
-alias mkdir='mkdir -p'    # Create parent directories as needed
-alias rm='rm -i'          # Prompt before removing files
-alias cp='cp -i'          # Prompt before overwriting files
-alias mv='mv -i'          # Prompt before overwriting files
+alias h='history'          # Show command history
+alias grep='grep --color=auto'  # Enable colors for grep if supported
+alias mkdir='mkdir -p'     # Create parent directories as needed
+alias rm='rm -i'           # Prompt before removing files
+alias cp='cp -i'           # Prompt before overwriting files
+alias mv='mv -i'           # Prompt before overwriting files
 
 # System monitoring
-alias top='htop'          # Use htop instead of top (install htop if not available)
-alias df='df -h'          # Show disk usage in human-readable format
+alias top='btop'           # Use btop instead of top (install btop if not available)
+alias df='df -h'           # Show disk usage in human-readable format
 alias du='du -h --max-depth=1'  # Show directory sizes in human-readable format
 
 # ====================
@@ -64,7 +64,7 @@ alias yt='~/bin/yt-dlp_script.sh'  # Alias for yt-dlp script
 # alias example='command_to_run'
 
 # ====================
-# Ultimate Extract Function
+# Function for extracting any archive
 # ====================
 
 extract() {
@@ -125,4 +125,3 @@ parse_git_branch() {
 
 # Set a minimalist stylized prompt with Git support
 export PS1="\u@\h:\w\[\e[38;5;61m\]\$(parse_git_branch)\[\e[0m\] \[\e[38;5;75m\]λ\[\e[0m\] "
-# ====================
